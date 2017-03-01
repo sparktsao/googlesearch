@@ -27,7 +27,7 @@ class WebPage:
         import os.path
         if os.path.exists(query+".html"):
             self.content = open(query+".html").read()
-            return self.content
+            return self.content	
 
         qurl = self.url+query+'&num=100'
         print qurl,'ok', type(qurl)
@@ -56,6 +56,49 @@ class WebPage:
                 desc = tree.xpath('//*[@id="rso"]/div/div/div['+str(i+1)+']/div/div/div/span')
                 for k,_ in enumerate(desc):
                     print "---> sum:", desc[k].text
+
+
+    def showpage(self,imax=3):
+
+	parser = etree.HTMLParser()
+	tree = etree.parse(StringIO(unicode(self.content)),parser)
+
+	import re
+        def cleanhtml(raw_html):
+            cleanr = re.compile('<.*?>')
+            cleantext = re.sub(cleanr, '', raw_html)
+            return cleantext
+	
+	def xcheck(tree,xpath0,n):
+            r1 = ''
+            u1 = ''
+            t1 = tree.xpath(xpath0)
+	    if n<len(t1):
+		if 'href' in t1[n].attrib:
+                    u1 =  t1[n].attrib['href']
+	        r1 = cleanhtml(etree.tostring(t1[n],pretty_print=True))
+                return r1.strip(),u1.strip()
+            else:
+                return None,None
+
+
+	import HTMLParser
+	hparser = HTMLParser.HTMLParser()    
+        hparser.unescape('')
+        
+	xpath1 = '//*[@id="rso"]/div/div/div/div/h3/a'
+	xpath2 = '//*[@id="rso"]/div/div/div/div/div/div/span'
+	for i in range(imax):
+            r1,u1 = xcheck(tree,xpath1,i)
+	    r2,u2 = xcheck(tree,xpath2,i)
+            if r1 is None: break
+	    print hparser.unescape(r1)
+            print hparser.unescape(u1)
+            print hparser.unescape(r2)
+#	    print r1
+#            print u1
+#            print r2
+	
 
     def cache(self):
         f1 = open(self.query+".html","w")
