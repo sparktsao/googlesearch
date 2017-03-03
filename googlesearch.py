@@ -105,12 +105,16 @@ class WebPage:
         f1.write(self.content)
         f1.close()        
 
+
 go = WebPage()
 query = go.prune(sys.argv[1])
 print query
+n = 3
+if len(sys.argv)>2:
+    n = int(sys.argv[2])
 content = go.doquery(query)
 go.cache()
-go.showpage() 
+go.showpage(n) 
 
 
 
