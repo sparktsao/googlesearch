@@ -81,13 +81,13 @@ class WebPage:
             else:
                 return None,None
 
-
 	import HTMLParser
 	hparser = HTMLParser.HTMLParser()    
         hparser.unescape('')
         
 	xpath1 = '//*[@id="rso"]/div/div/div/div/h3/a'
 	xpath2 = '//*[@id="rso"]/div/div/div/div/div/div/span'
+        textarray = []
 	for i in range(imax):
             r1,u1 = xcheck(tree,xpath1,i)
 	    r2,u2 = xcheck(tree,xpath2,i)
@@ -98,7 +98,10 @@ class WebPage:
 #	    print r1
 #            print u1
 #            print r2
-	
+	    textarray.append(hparser.unescape(r1))
+            textarray.append(hparser.unescape(r2))
+#            print type(r2),hparser.unescape(r2))
+        return "\n".join(textarray)
 
     def cache(self):
         f1 = open(self.query+".html","w")
@@ -114,7 +117,12 @@ if len(sys.argv)>2:
     n = int(sys.argv[2])
 content = go.doquery(query)
 go.cache()
-go.showpage(n) 
+result = go.showpage(n) 
+import codecs
+file1 = codecs.open("q1.gtxt", "w", "utf-8")
+file1.write(result)
+file1.close()
+
 
 
 
